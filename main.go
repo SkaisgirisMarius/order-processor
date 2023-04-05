@@ -15,7 +15,6 @@ func main() {
 		log.Fatal("Could not start MySQL server. ", err)
 	}
 	r := server.NewRouter(database)
-	defer database.Close()
 
 	http.ListenAndServe(":8080", r)
 

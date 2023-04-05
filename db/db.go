@@ -5,9 +5,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func ConnectToMySQL(dataSourceName string) (*gorm.DB, error) {
+const connectionString = "user:password@tcp(localhost:3306)/mydatabase?charset=utf8mb4&parseTime=True&loc=Local"
+
+func ConnectToMySQL() (*gorm.DB, error) {
 	// Open the database connection
-	db, err := gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}

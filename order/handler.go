@@ -2,7 +2,6 @@ package order
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"gorm.io/gorm"
@@ -14,45 +13,36 @@ import (
 
 func InitOrderRouter(db *gorm.DB) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", getOrderListHandler)
+	r.Get("/", getOrderListHandler(db))
 	// r.Get("/{tagId}", getOrderByIDHandler)
-	r.Post("/", postOrderHandler)
+	r.Post("/", postOrderHandler(db))
 	return r
 }
 
-func getOrderListHandler(w http.ResponseWriter, r *http.Request) {
-	tags, err := getOrderList()
-	if err != nil {
-		log.Println(err)
-		helper.SendJsonError(w, http.StatusInternalServerError, err)
-		return
-	}
-	helper.SendJsonOk(w, tags)
-}
-
-func getOrderList() (*[]Order, error) {
-	var tagsList = make([]Order, 0)
-	for _, value := range tagsMap.ByID {
-		if !value.Disabled {
-			tagsList = append(tagsList, value)
+func getOrderListHandler(db *gorm.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var orders []Order
+		if err := db.Find(&orders).Error; err != nil {
+			helper.SendJsonError(w, http.StatusInternalServerError, err)
+			return
 		}
+		helper.SendJsonOk(w, orders)
 	}
-	return &tagsList, nil
 }
 
 func postOrderHandler(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var order Order
 		if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			helper.SendJsonError(w, http.StatusBadRequest, err)
 			return
 		}
 
 		if err := db.Create(&order).Error; err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			helper.SendJsonError(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		helper.SendJsonOk(w, "Created")
 	}
 }

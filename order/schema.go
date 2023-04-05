@@ -1,4 +1,4 @@
-package schema
+package order
 
 type Order struct {
 	ID         int64  `gorm:"primary_key" json:"id"`

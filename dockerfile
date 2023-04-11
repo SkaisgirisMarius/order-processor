@@ -1,7 +1,13 @@
-FROM mysql:latest
+FROM mysql:8.0
 
-ENV MYSQL_DATABASE=mydatabase
-ENV MYSQL_USER=user
-ENV MYSQL_PASSWORD=password
+# Set the environment variables
+ENV MYSQL_DATABASE mydatabase
+ENV MYSQL_USER user
+ENV MYSQL_PASSWORD password
+ENV MYSQL_ROOT_PASSWORD password
 
-COPY ./schema.sql /docker-entrypoint-initdb.d/
+# Copy the SQL script to create the table
+COPY schema.sql /docker-entrypoint-initdb.d/
+
+# Expose the MySQL port
+EXPOSE 3306

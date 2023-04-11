@@ -1,11 +1,9 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/SkaisgirisMarius/order-processor.git/db"
 	"github.com/SkaisgirisMarius/order-processor.git/server"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -16,6 +14,5 @@ func main() {
 	}
 	r := server.NewRouter(database)
 
-	http.ListenAndServe(":8080", r)
-
+	server.StartServer(r)
 }

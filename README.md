@@ -14,7 +14,7 @@ Chi router was chosen as a lightweight solution with easy to use features to han
    `docker build -t my-mysql-image .`
 4. Run the Docker container from the built image using the following command:
 `docker run --name my-mysql-container -p 3306:3306 -d my-mysql-image`
-5. Once the service is running you might need to create a mysql account with the credentials specified in the `schema.sql` file
+5. Once the service is running you might need to create a mysql user with the credentials specified in the `schema.sql` file
 6. After that is done you can run the service by running `go run main.go` while in the main project directory.
 
 ## Specifications
@@ -33,8 +33,9 @@ Chi router was chosen as a lightweight solution with easy to use features to han
 * Sample body:
 ```
 {
+    "country": "lt",
     "proxy_count": 50,
-    "name": "Example Order"
+    "name": "Example "
 }
 ```
 
@@ -52,6 +53,7 @@ To test it you can simply run `go test -v ./...` from the root of directory of t
 Testing could be enhanced though.
 
 ## TODO
-* Enhance logging
+* Add better validation (Not just GORM)
+* Enhance and cleanup logging
 * Increase test coverage
 * Add config

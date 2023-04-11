@@ -1,5 +1,6 @@
 CREATE TABLE orders (
                         id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                        country ENUM('lt', 'us', 'de') NOT NULL,
                         proxy_count bigint(20) NOT NULL CHECK (proxy_count <= 100),
                         name varchar(30) DEFAULT NULL,
                         created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

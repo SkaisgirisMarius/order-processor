@@ -20,8 +20,8 @@ func TestGetOrderListHandler(t *testing.T) {
 	if err = db.AutoMigrate(&Order{}); err != nil {
 		t.Fatalf("Failed to auto-migrate database schema: %v", err)
 	}
-	db.Create(&Order{ProxyCount: 10, Name: "Test Order"})
-	db.Create(&Order{ProxyCount: 20, Name: "Test Order2"})
+	db.Create(&Order{Country: "lt", ProxyCount: 10, Name: "Test Order"})
+	db.Create(&Order{Country: "de", ProxyCount: 20, Name: "Test Order2"})
 
 	req := httptest.NewRequest(http.MethodGet, "/api/order", nil)
 	w := httptest.NewRecorder()
@@ -38,8 +38,10 @@ func TestGetOrderListHandler(t *testing.T) {
 	assert.Len(t, orders, 2)
 	assert.Equal(t, "Test Order", orders[0].Name)
 	assert.Equal(t, int64(10), orders[0].ProxyCount)
+	assert.Equal(t, "lt", orders[0].Country)
 	assert.Equal(t, "Test Order2", orders[1].Name)
 	assert.Equal(t, int64(20), orders[1].ProxyCount)
+	assert.Equal(t, "de", orders[1].Country)
 }
 
 // This is a quick test that runs in sqlite to not create a new mySQL server just for tests
@@ -53,7 +55,7 @@ func TestPostOrderHandler(t *testing.T) {
 		t.Fatalf("Failed to auto-migrate database schema: %v", err)
 	}
 
-	newOrder := Order{ProxyCount: 10, Name: "Test Order"}
+	newOrder := Order{Country: "lt", ProxyCount: 10, Name: "Test Order"}
 	payload, err := json.Marshal(newOrder)
 	if err != nil {
 		t.Fatalf("Failed to marshal JSON payload: %v", err)

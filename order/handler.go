@@ -13,6 +13,7 @@ import (
 	"github.com/SkaisgirisMarius/order-processor.git/helper"
 )
 
+// InitOrderRouter initializes the order router and returns a http.Handler
 func InitOrderRouter(db *gorm.DB) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", getOrderListHandler(db))
@@ -21,6 +22,7 @@ func InitOrderRouter(db *gorm.DB) http.Handler {
 	return r
 }
 
+// getOrderListHandler returns a http.HandlerFunc that handles GET requests for order list
 func getOrderListHandler(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var orders []Order
@@ -32,10 +34,10 @@ func getOrderListHandler(db *gorm.DB) http.HandlerFunc {
 	}
 }
 
+// getOrderByIDHandler returns a http.HandlerFunc that handles GET requests for a specific order
 func getOrderByIDHandler(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		orderID := chi.URLParam(r, "orderID")
-
 		var order Order
 		if err := db.Where("id = ?", orderID).First(&order).Error; err != nil {
 			if strings.Contains(err.Error(), "record not found") {
@@ -45,11 +47,11 @@ func getOrderByIDHandler(db *gorm.DB) http.HandlerFunc {
 			}
 			return
 		}
-
 		helper.SendJsonOk(w, order)
 	}
 }
 
+// postOrderHandler returns a http.HandlerFunc that handles POST requests to create a new order
 func postOrderHandler(db *gorm.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var order Order
@@ -58,11 +60,13 @@ func postOrderHandler(db *gorm.DB) http.HandlerFunc {
 			return
 		}
 
+		// Create the new order
 		if err := db.Create(&order).Error; err != nil {
 			helper.SendJsonError(w, http.StatusInternalServerError, err)
 			return
 		}
 
+		// Fetch the newly created order
 		if err := db.First(&order, order.ID).Error; err != nil {
 			helper.SendJsonError(w, http.StatusInternalServerError, err)
 			return
@@ -71,20 +75,3 @@ func postOrderHandler(db *gorm.DB) http.HandlerFunc {
 		helper.SendJsonOk(w, order)
 	}
 }
-
-//func postOrderHandler(db *gorm.DB) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		var order Order
-//		if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
-//			helper.SendJsonError(w, http.StatusBadRequest, err)
-//			return
-//		}
-//
-//		if err := db.Create(&order).Error; err != nil {
-//			helper.SendJsonError(w, http.StatusInternalServerError, err)
-//			return
-//		}
-//
-//		helper.SendJsonOk(w, "Created")
-//	}
-//}

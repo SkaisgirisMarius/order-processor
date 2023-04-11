@@ -12,7 +12,6 @@ import (
 const (
 	HeaderContentType   = "Content-Type"
 	MimeApplicationJSON = "application/json"
-	MimeTextPlain       = "text/plain"
 )
 
 func SendJson(w http.ResponseWriter, status int, obj interface{}) error {

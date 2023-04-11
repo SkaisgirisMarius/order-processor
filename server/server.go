@@ -36,6 +36,7 @@ func NewRouter(db *gorm.DB) http.Handler {
 }
 
 func StartServer(handler http.Handler) {
+	log.Println("Starting server on port :3000")
 	httpSrv := makeHTTPServer(handler)
 	httpSrv.Addr = ":3000"
 	err := httpSrv.ListenAndServe()
